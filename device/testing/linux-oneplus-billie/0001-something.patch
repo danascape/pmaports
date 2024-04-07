@@ -1,0 +1,67 @@
+From 1ef90c04c6ebd7b996f78fc1a936a1c990d4135d Mon Sep 17 00:00:00 2001
+From: Saalim Quadri <danascape@gmail.com>
+Date: Sun, 7 Apr 2024 11:12:05 +0530
+Subject: [PATCH] something
+
+---
+ drivers/oneplus/coretech/control_center/control_center.c | 2 +-
+ drivers/oneplus/coretech/houston/houston.c               | 2 +-
+ drivers/oneplus/coretech/tpd/tpd.c                       | 2 +-
+ drivers/oneplus/oneplus_healthinfo/oneplus_healthinfo.c  | 2 +-
+ 4 files changed, 4 insertions(+), 4 deletions(-)
+
+diff --git a/drivers/oneplus/coretech/control_center/control_center.c b/drivers/oneplus/coretech/control_center/control_center.c
+index 9bb76201d904..161328ed5224 100644
+--- a/drivers/oneplus/coretech/control_center/control_center.c
++++ b/drivers/oneplus/coretech/control_center/control_center.c
+@@ -320,7 +320,7 @@ static struct list_head cc_request_list;
+ static struct list_head cc_pending_list;
+ static DEFINE_SPINLOCK(cc_async_lock);
+ static struct workqueue_struct *cc_wq;
+-extern cc_cal_next_freq_with_extra_util(
++extern unsigned cc_cal_next_freq_with_extra_util(
+ 	struct cpufreq_policy *pol, unsigned int next_freq);
+ extern void clk_get_ddr_freq(u64* val);
+ static void cc_queue_rq(struct cc_command *cc);
+diff --git a/drivers/oneplus/coretech/houston/houston.c b/drivers/oneplus/coretech/houston/houston.c
+index 6521cb1ef331..e3f615dcb9f6 100644
+--- a/drivers/oneplus/coretech/houston/houston.c
++++ b/drivers/oneplus/coretech/houston/houston.c
+@@ -2550,7 +2550,7 @@ static struct kernel_param_ops rtg_dump_ops = {
+ module_param_cb(rtg_dump, &rtg_dump_ops, NULL, 0444);
+ 
+ 
+-static int get_gpu_percentage()
++static int get_gpu_percentage(void)
+ {
+ 	struct kgsl_clk_stats *stats = NULL;
+ 	if (gpwr) {
+diff --git a/drivers/oneplus/coretech/tpd/tpd.c b/drivers/oneplus/coretech/tpd/tpd.c
+index d014e84ea099..32701015a842 100644
+--- a/drivers/oneplus/coretech/tpd/tpd.c
++++ b/drivers/oneplus/coretech/tpd/tpd.c
+@@ -859,7 +859,7 @@ void tpd_init_policy(struct cpufreq_policy *policy)
+ 		tpd_logd("%d ", i);
+ }
+ 
+-static void tpd_mgp_init()
++static void tpd_mgp_init(void)
+ {
+ 	int i, j;
+ 
+diff --git a/drivers/oneplus/oneplus_healthinfo/oneplus_healthinfo.c b/drivers/oneplus/oneplus_healthinfo/oneplus_healthinfo.c
+index b90e9e1ce5fe..901483e894c2 100644
+--- a/drivers/oneplus/oneplus_healthinfo/oneplus_healthinfo.c
++++ b/drivers/oneplus/oneplus_healthinfo/oneplus_healthinfo.c
+@@ -1610,7 +1610,7 @@ static const struct file_operations proc_runtime_overload_fops = {
+ static struct proc_dir_entry *oneplus_healthinfo;
+ 
+ #ifdef CONFIG_ONEPLUS_TASKLOAD_INFO
+-static void adjust_window() {
++static void adjust_window(void) {
+ 	sample_window.timestamp = jiffies_64;
+ 	sample_window.window_index++;
+ 	mod_timer(&task_load_info_timer, jiffies + ohm_sample_time*HZ);  /* 5s */
+-- 
+2.34.1
+
