@@ -1,0 +1,28 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-oneplus-billie
+pkgdesc="OnePlus Nord N10"
+pkgver=1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-oneplus-billie
+	mkbootimg
+	postmarketos-base
+"
+makedepends="devicepkg-dev"
+source="deviceinfo"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+sha512sums="
+a8845c46d98069efdde0f5ced3252b26b8d0a0e53b9f46ca85a591298d5abaa9668884d8eaf3dac6b94f17b3639b39070d93a378a6458ec830c98cbd2c1ded21  deviceinfo
+"

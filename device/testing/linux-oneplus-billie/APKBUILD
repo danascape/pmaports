@@ -1,0 +1,77 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-oneplus-billie
+pkgver=4.19.125
+pkgrel=0
+pkgdesc="OnePlus Nord N10 kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="oneplus-billie"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	android-tools
+	bash
+	bc
+	bison
+	devicepkg-dev
+	dtc
+	findutils
+	flex
+	linux-headers
+	openssl-dev
+	perl
+	xz
+"
+
+# Source
+_repository="android_kernel_oneplus_sm6350"
+_commit="648d0db1daec4c30916cf7b6d913a0d92b980ade"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
+	$_config
+	0005-Remove-inline-from-external-functions.patch
+	0001-something.patch
+	0001-Revert-selinux-Relocate-ss_initialized-and-selinux_e.patch	
+"
+
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	REPLACE_GCCH=0
+	. downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" DTC_EXT="/usr/bin/dtc" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	KERNEL_IMAGE_NAME=Image downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+
+	mkdir -p "$pkgdir/boot/dtbs"
+	install -Dm644 "$_outdir/arch/arm64/boot/dts/vendor/qcom/lagoon.dtb" \
+		"$pkgdir/boot/dtbs"
+
+	make O="$_outdir" \
+		ARCH="$_carch" \
+		INSTALL_MOD_STRIP=1 \
+		INSTALL_MOD_PATH="$pkgdir" \
+		modules_install
+}
+
+sha512sums="
+841e4a13ee5422e2483a25b4821a299dbe804ffb8956e963142ddc65fb88bd818b31dbf544b88072f38f03e496b3a587a5f730c660b018dcb3bab6c28b74771e  linux-oneplus-billie-648d0db1daec4c30916cf7b6d913a0d92b980ade.tar.gz
+2f35e3b8de99331f07eac701f4d613b343f95022adc6b6ff5f163c7ef24075d72f056ceaa7dbc46c2a687414be8b54b1c12915faf114dcbfddacabef6ca21539  config-oneplus-billie.aarch64
+aba7ae12986a2df81c6993f369390c6b3f5586fa70ab747e03d59aaf08cb79482a44eab723aed4469e98cadea0f70912f4e67caaf67cc279e1dc85e485b93a0f  0005-Remove-inline-from-external-functions.patch
+ce2c74cb32a3198d34e36beb5c2e9fe3dbdbd36bf78972c8582933e1072ffe910a51e21f3b99690e5a961f7fb858ffeb82b2ce817ba85db9d5bc42bce042a6e9  0001-something.patch
+a36cd23e047d3675ed99b7d1a8a5f36b9ae21000d697683206329791920c58bc3d1bdfaa03b20c1d9e4c6767402a91a67947d54a700fe50adbba6b1e25ae6ffd  0001-Revert-selinux-Relocate-ss_initialized-and-selinux_e.patch
+"
