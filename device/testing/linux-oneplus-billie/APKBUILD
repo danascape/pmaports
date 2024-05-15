@@ -54,35 +54,12 @@ build() {
 }
 
 package() {
-	downstreamkernel_package \
+	KERNEL_IMAGE_NAME=Image.gz downstreamkernel_package \
 		"$builddir" "$pkgdir" "$_carch" "$_flavor" "$_outdir"
 
-    dtbodir="$builddir/$_outdir/arch/arm64/boot/dts/vendor/qcom"
-
-	mkdtboimg create "$pkgdir/boot/dtbo.img" --page_size=4096 \
-		"$dtbodir/billie8-qrd-overlay.dtbo" \
-		"$dtbodir/lagoon-mtp-overlay.dtbo" \
-		"$dtbodir/lito-atp-overlay.dtbo" \
-		"$dtbodir/lito-qrd-overlay.dtbo" \
-		"$dtbodir/lito-v2-atp-overlay.dtbo" \
-		"$dtbodir/lito-v2-qrd-overlay.dtbo" \
-		"$dtbodir/orchid-cdp-overlay.dtbo" \
-		"$dtbodir/lagoon-atp-overlay.dtbo" \
-		"$dtbodir/lagoon-mtp-usbc-overlay.dtbo" \
-		"$dtbodir/lito-cdp-overlay.dtbo" \
-		"$dtbodir/lito-rumi-overlay.dtbo" \
-		"$dtbodir/lito-v2-cdp-overlay.dtbo" \
-		"$dtbodir/litomagnus-cdp-overlay.dtbo" \
-		"$dtbodir/orchid-mtp-overlay.dtbo" \
-		"$dtbodir/lagoon-cdp-overlay.dtbo" \
-		"$dtbodir/lagoon-rumi-overlay.dtbo" \
-		"$dtbodir/lito-mtp-overlay.dtbo" \
-		"$dtbodir/lito-v2-atp-lcd-overlay.dtbo" \
-		"$dtbodir/lito-v2-mtp-overlay.dtbo" \
-		"$dtbodir/litomagnus-mtp-overlay.dtbo"
-
-	install -Dm644 "$_outdir/arch/arm64/boot/Image-dtb" \
-		"$pkgdir/boot/vmlinuz"
+	mkdir -p "$pkgdir/boot/dtbs"
+	install -Dm644 "$_outdir/arch/arm64/boot/dts/vendor/qcom/lagoon.dtb" \
+		"$pkgdir/boot/dtbs"
 
 	make O="$_outdir" \
 		ARCH="$_carch" \
@@ -93,7 +70,7 @@ package() {
 
 sha512sums="
 841e4a13ee5422e2483a25b4821a299dbe804ffb8956e963142ddc65fb88bd818b31dbf544b88072f38f03e496b3a587a5f730c660b018dcb3bab6c28b74771e  linux-oneplus-billie-648d0db1daec4c30916cf7b6d913a0d92b980ade.tar.gz
-e31d4876848d88884c5b42933f85938c72638377ecba30e7bcde0776567ea099395e6aa00bc5269680868acedcabd344a848cbe1a12f35fbc30169ecd8f8e12e  config-oneplus-billie.aarch64
+e8aebe583e1ed011f6391f2681426879b140b5d918acefa06cf67b297910aab13859d07ffb45dd5b299991ec63205d3ed49086bb4e653e74110fa49a0348b2d5  config-oneplus-billie.aarch64
 aba7ae12986a2df81c6993f369390c6b3f5586fa70ab747e03d59aaf08cb79482a44eab723aed4469e98cadea0f70912f4e67caaf67cc279e1dc85e485b93a0f  0005-Remove-inline-from-external-functions.patch
 ce2c74cb32a3198d34e36beb5c2e9fe3dbdbd36bf78972c8582933e1072ffe910a51e21f3b99690e5a961f7fb858ffeb82b2ce817ba85db9d5bc42bce042a6e9  0001-something.patch
 a36cd23e047d3675ed99b7d1a8a5f36b9ae21000d697683206329791920c58bc3d1bdfaa03b20c1d9e4c6767402a91a67947d54a700fe50adbba6b1e25ae6ffd  0001-Revert-selinux-Relocate-ss_initialized-and-selinux_e.patch
