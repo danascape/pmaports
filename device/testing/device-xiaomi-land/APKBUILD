@@ -1,0 +1,29 @@
+# Reference: <https://postmarketos.org/devicepkg>
+pkgname=device-xiaomi-land
+pkgdesc="Xiaomi Redmi Note 3S"
+pkgver=1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	postmarketos-base
+	linux-xiaomi-land
+	mkbootimg
+	msm-fb-refresher
+"
+makedepends="devicepkg-dev"
+source="deviceinfo"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+sha512sums="
+f1b51ff5b1ce8b31024e7ffdfc28b941d608165c76b8bbd2806c86729ac66b84db314858377ab5df77f5c46208e0bbe6f3b9240548886b0c2a9eb2abbc553fd5  deviceinfo
+"

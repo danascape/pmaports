@@ -1,0 +1,58 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/(CHANGEME!)
+
+pkgname=linux-xiaomi-land
+pkgver=4.19.312
+pkgrel=0
+pkgdesc="Xiaomi Redmi Note 3S kernel fork"
+arch="aarch64"
+_carch="arm64"
+_flavor="xiaomi-land"
+url="https://kernel.org"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bash
+	bc
+	bison
+	devicepkg-dev
+	findutils
+	flex
+	linux-headers
+	openssl-dev
+	perl
+	xz
+"
+
+# Source
+_repository="android_kernel_xiaomi_msm8937"
+_commit="2cef3342bda2f76d8a2a92070e81f67a1219622c"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
+	$_config
+"
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	REPLACE_GCCH=0
+	. downstreamkernel_prepare
+}
+
+build() {
+	unset LDFLAGS
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+}
+
+package() {
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
+}
+
+sha512sums="
+faeb8e9fe6de0069c3a4c20ea1714d5c728c99746505b8ad4d6d64cf7c03e5ebc8da08028596d5c2356795ce807be761090fd3dbfedfdeb791ed47b6d704d858  linux-xiaomi-land-2cef3342bda2f76d8a2a92070e81f67a1219622c.tar.gz
+280d70e20eb3e32c3f88890243f0aab89352f3c034507e403209b2b57a0f0f8fadf35ba35e4843772086fc54d9f781db8133b40f576d7d958bba0da3e5c0d3de  config-xiaomi-land.aarch64
+"
