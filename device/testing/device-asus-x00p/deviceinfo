@@ -13,6 +13,7 @@ deviceinfo_arch="aarch64"
 deviceinfo_chassis="handset"
 deviceinfo_keyboard="false"
 deviceinfo_external_storage="true"
+deviceinfo_swap_size_recommended="1024"
 
 # Bootloader related
 deviceinfo_flash_method="fastboot"

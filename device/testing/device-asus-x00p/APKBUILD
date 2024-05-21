@@ -8,15 +8,15 @@ license="MIT"
 arch="aarch64"
 options="!check !archcheck"
 depends="
+	postmarketos-base
+	postmarketos-base-downstream-disable-udev-v4l
 	linux-asus-x00p
 	mkbootimg
-	postmarketos-base
 	msm-fb-refresher
 "
 makedepends="devicepkg-dev"
 source="
 	deviceinfo
-	initfs-hook.sh
 "
 
 build() {
@@ -28,6 +28,5 @@ package() {
 }
 
 sha512sums="
-ece85df3931736b933e934a46ec6aa2a84fb7511d2c6000a60b5f9064f4d8a0d53b11c7356de6bee3d57e29776b67000c50c5a88311ce0490857effcbb60aebd  deviceinfo
-23d8031d87e3e01a76886d0ad091c51f3146cd2ded947f32e47bcf84413882c3be0fcbdd559a7fc3d3372c42510c276d37741e836ca9aa4549142e43a625cc79  initfs-hook.sh
+decd83deb9342aebc3c06b9552770a9ed2446e5ba702411d37f6ee1bc41b9632858052d3d74eebf759f0434142480219839153f8692acd8c3ee0b805a5906adf  deviceinfo
 "
