@@ -1,8 +1,8 @@
 # Reference: <https://postmarketos.org/devicepkg>
-pkgname=device-asus-x00p
-pkgdesc="Asus Max M1"
+pkgname=device-xiaomi-land
+pkgdesc="Xiaomi Xiaomi Redmi 3(S/X)"
 pkgver=1
-pkgrel=1
+pkgrel=0
 url="https://postmarketos.org"
 license="MIT"
 arch="aarch64"
@@ -27,6 +27,6 @@ package() {
 }
 
 sha512sums="
-f6cedc33f0a747679e9dcb4b54a7a9c8d16a50147354d1a0f6870784d2d8c02390b17e39cd19b191dc73b9c179f93156e92a6e8c9cc955c87e9cbab38ffed21a  deviceinfo
+7473e72924ac0840e44621aa471a7526b0ab60249560c7482e22b86a40c82b9afb36923f79c4191b7260cff237d56d6d5b2dd85a9ed20e910e2da4c52a1aed9f  deviceinfo
 cf83e1357eefb8bdf1542850d66d8007d620e4050b5715dc83f4a921d36ce9ce47d0d13c5d85f2b0ff8318d2877eec2f63b931bd47417a81a538327af927da3e  modules-initfs
 "
