@@ -2,9 +2,9 @@
 # Kernel config based on: arch/arm64/configs/(CHANGEME!)
 
 pkgname=linux-oneplus-billie
-pkgver=4.19.125
+pkgver=4.19.315
 pkgrel=0
-pkgdesc="OnePlus Nord N10 kernel fork"
+pkgdesc="OnePlus Nord N10 5G kernel fork"
 arch="aarch64"
 _carch="arm64"
 _flavor="oneplus-billie"
@@ -12,32 +12,33 @@ url="https://kernel.org"
 license="GPL-2.0-only"
 options="!strip !check !tracedeps pmb:cross-native"
 makedepends="
-	android-tools
 	bash
 	bc
 	bison
 	devicepkg-dev
-	dtc
 	findutils
 	flex
-	linux-headers
 	openssl-dev
 	perl
+	clang
+	linux-headers
 	xz
+
 "
+
+export CC="clang"
+export HOSTCC="clang"
 
 # Source
 _repository="android_kernel_oneplus_sm6350"
-_commit="648d0db1daec4c30916cf7b6d913a0d92b980ade"
+_commit="4f3a035174c2fba5e65176b44c9e2b3e418c2232"
 _config="config-$_flavor.$arch"
 source="
 	$pkgname-$_commit.tar.gz::https://github.com/LineageOS/$_repository/archive/$_commit.tar.gz
 	$_config
-	0005-Remove-inline-from-external-functions.patch
-	0001-something.patch
-	0001-Revert-selinux-Relocate-ss_initialized-and-selinux_e.patch	
+	fix-lagoon-dtbo-compilation.patch
+	fix-brackets-and-pon_rt_sts.patch
 "
-
 builddir="$srcdir/$_repository-$_commit"
 _outdir="out"
 
@@ -49,29 +50,38 @@ prepare() {
 
 build() {
 	unset LDFLAGS
-	make O="$_outdir" DTC_EXT="/usr/bin/dtc" ARCH="$_carch" CC="${CC:-gcc}" \
-		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS"
+	make O="$_outdir" ARCH="$_carch" CC="${CC:-gcc}" \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-postmarketOS" \
+		CONFIG_DEBUG_SECTION_MISMATCH=y \
+		V=1
 }
 
 package() {
-	KERNEL_IMAGE_NAME=Image.gz downstreamkernel_package \
-		"$builddir" "$pkgdir" "$_carch" "$_flavor" "$_outdir"
+	downstreamkernel_package "$builddir" "$pkgdir" "$_carch" \
+		"$_flavor" "$_outdir"
 
-	mkdir -p "$pkgdir/boot/dtbs"
-	install -Dm644 "$_outdir/arch/arm64/boot/dts/vendor/qcom/lagoon.dtb" \
-		"$pkgdir/boot/dtbs"
+	
+    	# Create the directory for DTBs
+    	mkdir -p "$pkgdir/boot/dtbs"
 
+    	# Install the lagoon.dtb file from the specified path
+    	install -Dm644 "$_outdir/arch/arm64/boot/dts/vendor/qcom/lagoon.dtb" \
+            "$pkgdir/boot/dtbs/lagoon.dtb"
+
+	# Install modules and device tree blobs
 	make O="$_outdir" \
-		ARCH="$_carch" \
-		INSTALL_MOD_STRIP=1 \
-		INSTALL_MOD_PATH="$pkgdir" \
-		modules_install
+                ARCH="$_carch" \
+                INSTALL_MOD_STRIP=1 \
+                INSTALL_MOD_PATH="$pkgdir" \
+                modules_install
+
+	# Clean up unnecessary files
+	rm -f "$pkgdir"/lib/modules/*/build "$pkgdir"/lib/modules/*/source
 }
 
 sha512sums="
-841e4a13ee5422e2483a25b4821a299dbe804ffb8956e963142ddc65fb88bd818b31dbf544b88072f38f03e496b3a587a5f730c660b018dcb3bab6c28b74771e  linux-oneplus-billie-648d0db1daec4c30916cf7b6d913a0d92b980ade.tar.gz
-e8aebe583e1ed011f6391f2681426879b140b5d918acefa06cf67b297910aab13859d07ffb45dd5b299991ec63205d3ed49086bb4e653e74110fa49a0348b2d5  config-oneplus-billie.aarch64
-aba7ae12986a2df81c6993f369390c6b3f5586fa70ab747e03d59aaf08cb79482a44eab723aed4469e98cadea0f70912f4e67caaf67cc279e1dc85e485b93a0f  0005-Remove-inline-from-external-functions.patch
-ce2c74cb32a3198d34e36beb5c2e9fe3dbdbd36bf78972c8582933e1072ffe910a51e21f3b99690e5a961f7fb858ffeb82b2ce817ba85db9d5bc42bce042a6e9  0001-something.patch
-a36cd23e047d3675ed99b7d1a8a5f36b9ae21000d697683206329791920c58bc3d1bdfaa03b20c1d9e4c6767402a91a67947d54a700fe50adbba6b1e25ae6ffd  0001-Revert-selinux-Relocate-ss_initialized-and-selinux_e.patch
+a865694fda2844fb1173d849fbc3a9d2aee33388e67e7adf4025ed8db67143107bf327908d7c7f3e9519c7a768ce5797fad4a1880e97491f5f7dcd7f2e6a6159  linux-oneplus-billie-4f3a035174c2fba5e65176b44c9e2b3e418c2232.tar.gz
+6c4bcad9f3055d3679442bdff0ffa1f28477d4e3aaf9ef76b57772cbdd968fef39aa22473333628933bc62a6cabd38233bbd7faa944b089c2fd642a46afae65d  config-oneplus-billie.aarch64
+d9c2ca60c3419e650bf527c18fa093d043dee6ad90353f947d55c3674ad0271d98a78ab2657d70d515ca2c3830d52ccaca62b119f443a959eb7c726d12a595f6  fix-lagoon-dtbo-compilation.patch
+37aebc40a1d9c2edcd5e3b18aa46e0299765815f8f9bc7896187bb96a9f63b796d66dd988890c8505455e84d11760429923d0093667f644ba284cc6a64a1c548  fix-brackets-and-pon_rt_sts.patch
 "

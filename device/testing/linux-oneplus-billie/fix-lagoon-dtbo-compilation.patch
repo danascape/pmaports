@@ -1,0 +1,24 @@
+From 944399e39791c5c8f1504908e7e4326033c9a701 Mon Sep 17 00:00:00 2001
+From: Anri Dellal <anridellal@gmail.com>
+Date: Sun, 1 Dec 2024 12:39:30 +0300
+Subject: [PATCH] Fix lagoon-cdp dtbo compilation error
+
+---
+ arch/arm64/boot/dts/vendor/qcom/lagoon-cdp.dtsi | 1 -
+ 1 file changed, 1 deletion(-)
+
+diff --git a/arch/arm64/boot/dts/vendor/qcom/lagoon-cdp.dtsi b/arch/arm64/boot/dts/vendor/qcom/lagoon-cdp.dtsi
+index 6637a13..5168d83 100644
+--- a/arch/arm64/boot/dts/vendor/qcom/lagoon-cdp.dtsi
++++ b/arch/arm64/boot/dts/vendor/qcom/lagoon-cdp.dtsi
+@@ -301,7 +301,6 @@
+ 	qcom,panel-supply-entries = <&dsi_panel_pwr_supply_144>;
+ 	qcom,mdss-dsi-bl-pmic-control-type = "bl_ctrl_dcs";
+ 	qcom,mdss-dsi-bl-min-level = <1>;
+-	qcom,mdss-dsi-bl-max-level = <255>;
+ 	qcom,mdss-dsi-bl-max-level = <4095>;
+ 	qcom,mdss-dsi-bl-inverted-dbv;
+ 	qcom,platform-te-gpio = <&tlmm 23 0>;
+-- 
+2.47.0
+

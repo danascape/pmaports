@@ -1,6 +1,6 @@
 # Reference: <https://postmarketos.org/devicepkg>
 pkgname=device-oneplus-billie
-pkgdesc="OnePlus Nord N10"
+pkgdesc="OnePlus Nord N10 5G"
 pkgver=1
 pkgrel=0
 url="https://postmarketos.org"
@@ -13,7 +13,10 @@ depends="
 	postmarketos-base
 "
 makedepends="devicepkg-dev"
-source="deviceinfo"
+source="
+	deviceinfo
+	modules-initfs
+"
 
 build() {
 	devicepkg_build $startdir $pkgname
@@ -24,5 +27,6 @@ package() {
 }
 
 sha512sums="
-38376d923369b4867839d8fcce816606433f6e7d5dd54aa370f38247bf01a38a6b52760ca7dcdd9433d087f5e61586fdb3ac74f48017970191c28e087beecdde  deviceinfo
+88573b92adb18f435c8ba4eb6730aad7d8e1b850794ffcd8747d0222fe822b30303038c774116f48d3e76306344f5c3468102ec1ffcf10237386c32b159b28ea  deviceinfo
+e70bae17df23dcaaaea0e2d3616556f04baa23f8ee1357785c0f539bf97282d8ddff53953e155b72689bb73beb38c2da3d08de2a61e866684edfa10a6593885d  modules-initfs
 "
