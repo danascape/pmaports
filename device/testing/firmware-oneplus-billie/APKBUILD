@@ -1,0 +1,137 @@
+maintainer="Saalim Quadri <danascape@gmail.com>"
+pkgname=firmware-oneplus-billie
+pkgver=20260513
+pkgrel=0
+pkgdesc="Firmware for OnePlus Nord N10 5G"
+subpackages="
+	$pkgname-adreno
+	$pkgname-adsp
+	$pkgname-cdsp
+	$pkgname-hexagonfs
+	$pkgname-ipa
+	$pkgname-modem
+	$pkgname-touchscreen
+	$pkgname-venus
+	$pkgname-wlan
+	"
+url="https://github.com/danascape/billie-firmware"
+arch="aarch64"
+license="proprietary"
+makedepends="pil-squasher"
+options="!check !strip !archcheck !tracedeps textrels pmb:cross-native"
+_commit="300826712da37ed8c6fb0d4c3df295dd84885b8c"
+source="https://github.com/danascape/billie-firmware/archive/$_commit/billie-firmware-$_commit.tar.gz"
+builddir="$srcdir/billie-firmware-$_commit"
+
+build() {
+	for i in *.mdt; do
+		pil-squasher "$(basename "$i" .mdt)".mbn "$i"
+	done
+}
+
+package() {
+	# parent package is empty
+	mkdir -p "$pkgdir"
+}
+
+adreno() {
+	pkgdesc="OnePlus N10 adreno firmware"
+
+	# TODO: replace with firmware-qcom-adreno-a619 when released to linux-firmware.
+	# The parent device package currently depends on a630-sqe
+	install -Dm644 "$builddir"/a619_gmu.bin -t \
+		"$subpkgdir/usr/lib/firmware/qcom/"
+	install -Dm644 "$builddir"/a615_zap.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+}
+
+adsp() {
+	pkgdesc="OnePlus N10 adsp firmware"
+
+	install -Dm644 "$builddir"/adsp.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+	install -Dm644 "$builddir"/adsp*.jsn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+}
+
+cdsp() {
+	pkgdesc="OnePlus N10 cdsp firmware"
+
+	install -Dm644 "$builddir"/cdsp.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+	install -Dm644 "$builddir"/cdsp*.jsn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+}
+
+hexagonfs() {
+        pkgdesc="OnePlus N10 hexagonfs files"
+
+        mkdir -p "$subpkgdir"/usr/share/qcom/sm6350/OnePlus/
+        cp -r "$builddir"/hexagonfs/ \
+                "$subpkgdir"/usr/share/qcom/sm6350/OnePlus/billie
+
+        # Remove files that we don't need - for now
+        rm -r "$subpkgdir"/usr/share/qcom/sm6350/OnePlus/billie/acdb/
+        rm -r "$subpkgdir"/usr/share/qcom/sm6350/OnePlus/billie/dsp/
+
+        find "$subpkgdir/usr/share/qcom/sm6350/OnePlus/billie/" \
+                -type f -exec chmod 0644 {} \;
+}
+
+ipa() {
+	pkgdesc="OnePlus N10 ipa firmware"
+
+	install -Dm644 "$builddir"/lagoon_ipa_fws.mbn \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/ipa_fws.mbn"
+}
+
+modem() {
+	pkgdesc="OnePlus N10 modem firmware"
+        depends="
+                msm-modem-uim-selection
+                q6voiced
+                qrtr
+                rmtfs
+                tqftpserv
+        "
+
+	install -Dm644 "$builddir"/modem.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+	install -Dm644 "$builddir"/modem*.jsn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+
+	cp -r "$builddir"/modem_pr/ \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+	find "$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/" \
+		-type f -exec chmod 0644 {} \;
+}
+
+touchscreen() {
+	pkgdesc="OnePlus N10 TouchScreen firmware"
+
+	install -Dm644 "$builddir"/Himax_firmware.bin \
+		"$subpkgdir/usr/lib/firmware/Himax_firmware.bin"
+}
+
+venus() {
+	pkgdesc="OnePlus N10 venus firmware"
+
+	install -Dm644 "$builddir"/venus.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+}
+
+wlan() {
+	pkgdesc="OnePlus N10 wlan firmware"
+
+	install -Dm644 "$builddir"/wlanmdsp.mbn -t \
+		"$subpkgdir/usr/lib/firmware/qcom/sm6350/OnePlus/billie/"
+
+	install -Dm644 "$builddir"/board-2.bin -t \
+		"$subpkgdir/usr/lib/firmware/ath10k/WCN3990/hw1.0/"
+	install -Dm644 "$builddir"/firmware-5.bin -t \
+		"$subpkgdir/usr/lib/firmware/ath10k/WCN3990/hw1.0/"
+}
+
+sha512sums="
+e20e507d30901beb4746a421e974896a9a74607059d752f896440e31e08cff8f0edc8a26a4ba8678fc6e7879b220e7f0be4eb341e417f46945bd3c29bf81bd28  billie-firmware-300826712da37ed8c6fb0d4c3df295dd84885b8c.tar.gz
+"

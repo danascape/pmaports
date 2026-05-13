@@ -1,0 +1,48 @@
+# Reference: <https://postmarketos.org/devicepkg>
+maintainer="Saalim Quadri <danascape@gmail.com>"
+pkgname=device-oneplus-billie
+pkgdesc="OnePlus Nord N10 5G"
+pkgver=1
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+        firmware-oneplus-billie-adreno
+        firmware-oneplus-billie-touchscreen
+        firmware-qcom-adreno-a630-sqe
+        linux-firmware-qcom
+	linux-oneplus-billie
+	mkbootimg
+	postmarketos-base
+        soc-qcom
+        soc-qcom-qbootctl
+"
+makedepends="devicepkg-dev"
+install="$pkgname-openrc.post-install $pkgname-openrc.post-upgrade"
+subpackages="$pkgname-openrc"
+source="
+	deviceinfo
+	modules-initfs
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+openrc() {
+        install_if="$pkgname=$pkgver-r$pkgrel openrc"
+        depends="hexagonrpcd-openrc openrc"
+
+        mkdir -p "$subpkgdir"
+}
+
+sha512sums="
+57c73c6a178c54666e2de78fd5c31d02f0066e5f091aef42c4b0e5b559ecd59df34fc5800a9496440dd0ab04ee783b06eca25d0e627c430d03e1ca6d3529aadb  deviceinfo
+f627d473ccfc01f39ed7b1345c2795af0cd358b4738d202e53fbae07c605d239f9139b034c5a29411bafe368b92a44c756e2bd029246b385d6397f519af8ff7c  modules-initfs
+"
