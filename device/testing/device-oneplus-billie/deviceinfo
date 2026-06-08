@@ -7,7 +7,7 @@ deviceinfo_name="OnePlus Nord N10 5G"
 deviceinfo_manufacturer="OnePlus"
 deviceinfo_codename="oneplus-billie"
 deviceinfo_year="2020"
-deviceinfo_dtb="qcom/sm6350-oneplus-nord-billie"
+deviceinfo_dtb="qcom/sm6350-oneplus-billie"
 deviceinfo_append_dtb="true"
 deviceinfo_arch="aarch64"
 
