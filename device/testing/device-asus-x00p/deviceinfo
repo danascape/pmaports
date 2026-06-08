@@ -7,9 +7,11 @@ deviceinfo_name="Asus Max M1"
 deviceinfo_manufacturer="Asus"
 deviceinfo_codename="asus-x00p"
 deviceinfo_year="2018"
+deviceinfo_dtb="qcom/msm8937-asus-x00p.dtb"
 deviceinfo_arch="aarch64"
 
 # Device related
+deviceinfo_drm="true"
 deviceinfo_chassis="handset"
 deviceinfo_external_storage="true"
 

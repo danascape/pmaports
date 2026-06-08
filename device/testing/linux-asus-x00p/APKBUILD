@@ -1,0 +1,72 @@
+# Reference: <https://postmarketos.org/vendorkernel>
+# Kernel config based on: arch/arm64/configs/X00P_defconfig
+
+maintainer="Saalim Quadri <danascape@gmail.com>"
+pkgname=linux-asus-x00p
+pkgver=7.0.9
+pkgrel=0
+pkgdesc="Mainline Kernel for Asus Max M1"
+arch="aarch64"
+_carch="arm64"
+_flavor="asus-x00p"
+url="https://github.com/danascape/linux-x00p"
+license="GPL-2.0-only"
+options="!strip !check !tracedeps pmb:cross-native"
+makedepends="
+	bison
+	clang
+	findutils
+	flex
+	installkernel
+	lld
+	llvm
+	openssl-dev
+	perl
+	python3
+	zstd
+"
+
+# Source
+_repository="linux-billie"
+_commit="d6a60bdad63f7b50edcd93ebc7790c1dab7ce09f"
+_config="config-$_flavor.$arch"
+source="
+	$pkgname-$_commit.tar.gz::https://github.com/danascape/$_repository/archive/$_commit.tar.gz
+	$_config
+"
+
+builddir="$srcdir/$_repository-$_commit"
+_outdir="out"
+
+prepare() {
+	default_prepare
+	cp "$srcdir/config-$_flavor.$arch" .config
+}
+
+build() {
+	unset LDFLAGS
+	make ARCH="$_carch" LLVM=1 \
+		KBUILD_BUILD_VERSION="$((pkgrel + 1 ))-$_flavor"
+}
+
+package() {
+	install -Dm644 "$builddir/arch/$_carch/boot/Image.gz" \
+		"$pkgdir/boot/vmlinuz"
+
+	make modules_install dtbs_install \
+		ARCH="$_carch" \
+		LLVM=1 \
+		INSTALL_PATH="$pkgdir"/boot/ \
+		INSTALL_MOD_PATH="$pkgdir"/usr \
+		INSTALL_MOD_STRIP=1 \
+		INSTALL_DTBS_PATH="$pkgdir"/boot/dtbs
+	rm -f "$pkgdir"/lib/modules/*/build "$pkgdir"/lib/modules/*/source
+
+	install -D "$builddir"/include/config/kernel.release \
+		"$pkgdir"/usr/share/kernel/$_flavor/kernel.release
+}
+
+sha512sums="
+09b02b3a2e4d99e717170ff4ef6d7fe2bf71bece23d2e5acccfb7a15a110f8c89f2b14ba6aab8f39482ab4e3e7929ef3c5a910107caa408d6ad3e8b7ca0196e7  linux-asus-x00p-d6a60bdad63f7b50edcd93ebc7790c1dab7ce09f.tar.gz
+028fff414d696b392219984967d98ea68b15fc15695c74f0309487e3bdbaddfdf27c2adf1d2b366644fc6180b570654ea3dc714399fbd4efb1254d258a056d07  config-asus-x00p.aarch64
+"

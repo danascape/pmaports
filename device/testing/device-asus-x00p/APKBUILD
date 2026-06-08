@@ -1,0 +1,33 @@
+# Reference: <https://postmarketos.org/devicepkg>
+maintainer="Saalim Quadri <danascape@gmail.com>"
+pkgname=device-asus-x00p
+pkgdesc="Asus Max M1"
+pkgver=5
+pkgrel=0
+url="https://postmarketos.org"
+license="MIT"
+arch="aarch64"
+options="!check !archcheck"
+depends="
+	linux-asus-x00p
+	mkbootimg
+	postmarketos-base
+"
+makedepends="devicepkg-dev"
+source="
+	deviceinfo
+	modules-initfs
+"
+
+build() {
+	devicepkg_build $startdir $pkgname
+}
+
+package() {
+	devicepkg_package $startdir $pkgname
+}
+
+sha512sums="
+b76273d15417dbcc62de34681a4bc4478795a79b4eb09a68c22b7d89e07ca369141c0a01ce5bcbbce7c911c514fc41ff2e88251dbe166c333e8de876dc9e81fe  deviceinfo
+f627d473ccfc01f39ed7b1345c2795af0cd358b4738d202e53fbae07c605d239f9139b034c5a29411bafe368b92a44c756e2bd029246b385d6397f519af8ff7c  modules-initfs
+"
